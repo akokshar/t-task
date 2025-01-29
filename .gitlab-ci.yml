@@ -1,0 +1,12 @@
+include:
+  - component: $CI_SERVER_FQDN/devops/ci/terraform/apply@master
+    inputs:
+      pipeline_name: playground
+      state_name: state
+      stage_plan: plan
+      stage_apply: apply
+
+stages:
+  - plan
+  - apply
+  - kubernetes-install
