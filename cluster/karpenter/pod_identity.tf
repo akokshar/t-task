@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "pod_assume_role" {
 }
 
 resource "aws_iam_role" "karpenter" {
-  name               = format("%s-%s-karpenter-pod-identity", local.environemnt, loca.name)
+  name               = format("%s-%s-karpenter-pod-identity", var.environment, var.name)
   assume_role_policy = data.aws_iam_policy_document.pod_assume_role.json
 }
 
@@ -25,8 +25,8 @@ resource "aws_iam_role_policy_attachment" "karpenter" {
 }
 
 resource "aws_eks_pod_identity_association" "karpenter" {
-  cluster_name    = module.eks.cluster_name
-  namespace       = "karpenter"
+  cluster_name    = var.cluster_name
+  namespace       = var.namespace
   service_account = "karpenter"
   role_arn        = aws_iam_role.karpenter.arn
 }

@@ -1,12 +1,12 @@
 locals {
   name        = "alex"
-  region      = "us-east-1"
+  region      = "eu-west-2"
   environment = "test"
   additional_aws_tags = {
     Owner = "Alex"
   }
   vpc_cidr           = "10.0.0.0/16"
-  availability_zones = ["us-east-1a", "us-east-1b"]
+  availability_zones = ["eu-west-2a", "eu-west-2b"]
 
   cluster_version = "1.32"
 
@@ -15,8 +15,8 @@ locals {
   cluster_endpoint_private_access      = true
 
   managed_ng_capacity_type  = "SPOT"
-  managed_ng_instance_types = ["m8g.medium"] # Smallest graviton instance
+  managed_ng_instance_types = ["t4g.medium"] # Smallest graviton instance
+  aws_managed_node_group_arch = "arm64"
   ebs_volume_size           = 50
-  launch_template_name      = format("launch-template-%s-%s", local.environment, local.name)
 }
 

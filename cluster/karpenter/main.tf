@@ -1,8 +1,9 @@
-resource "aws_iam_policy" "karpenter" {
-  name        = format("%s-%s-karpenter", local.environment, local.name)
-  description = "Allows karpenter to manage instances"
+data "aws_caller_identity" "this" {}
+data "aws_region" "this" {}
 
-  depends_on = [module.eks]
+resource "aws_iam_policy" "karpenter" {
+  name        = format("%s-%s-karpenter", var.environment, var.name)
+  description = "Allows karpenter to manage instances"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -37,7 +38,7 @@ resource "aws_iam_policy" "karpenter" {
         ],
         Condition = {
           "StringLike" : {
-            "ec2:ResourceTag/karpenter.sh/managed-by" : "${module.eks.cluster_name}"
+            "ec2:ResourceTag/karpenter.sh/managed-by" : "${var.cluster_name}"
           }
         },
         Effect   = "Allow",
@@ -49,7 +50,7 @@ resource "aws_iam_policy" "karpenter" {
         Action = [
           "iam:PassRole"
         ],
-        Resource = aws_iam_role.node.arn
+        Resource = "${var.worker_iam_role_arn}"
         Sid      = "PassNodeIAMRole"
       },
       {
@@ -57,7 +58,7 @@ resource "aws_iam_policy" "karpenter" {
         Action = [
           "eks:DescribeCluster"
         ],
-        Resource = "arn:aws:eks:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:cluster/${module.eks.cluster_name}",
+        Resource = "arn:aws:eks:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:cluster/${var.cluster_name}",
         Sid      = "EKSClusterEndpointLookup"
       }
     ]
@@ -72,42 +73,39 @@ resource "helm_release" "karpenter" {
   wait       = true
 
   create_namespace = true
-  namespace        = "karpenter"
+  namespace        = var.namespace
 
   values = [
     templatefile("${path.module}/templates/karpenter-values.yaml", {
-      cluster_name : module.eks.cluster_name
-      cluster_endpoint : module.eks.cluster_endpoint
+      cluster_name : var.cluster_name
+      cluster_endpoint : var.cluster_endpoint
     })
   ]
 }
 
-resource "kubernetes_manifest" "karpenter_nodeclass" {
-  depends_on = [ helm_release.karpenter ]
-
-  manifest = yamlencode(tepmlatefile("${path.module}/templates/karpenter-nodeclass.yaml", {
-    name: local.name
-    environment: local.environment
-    cluster_name: module.eks.cluster_name
+resource "kubectl_manifest" "karpenter_nodeclass" {
+  depends_on = [helm_release.karpenter]
+  yaml_body = templatefile("${path.module}/templates/karpenter-nodeclass.yaml", {
+    name: var.name
+    environment: var.environment
+    cluster_name: var.cluster_name
     security_groups: []
-    instance_profile: aws_instance_profile.default_instance_profile.name
-  }))
+    instance_profile: var.instance_profile_name
+  })
 }
 
-resource "kubernetes_resource" "karpenter_nodepool_x86" {
-  depends_on = [ helm_release.karpenter ]
-
-  manifest = yamlencode(tepmlatefile("${path.module}/templates/karpenter-nodepool-x86.yaml", {
-    name: format("%s-x86", local.name)
-    nodeclass_name: local.name
-  }))
+resource "kubectl_manifest" "karpenter_nodepool_x86" {
+  depends_on = [helm_release.karpenter]
+  yaml_body = templatefile("${path.module}/templates/karpenter-nodepool-x86.yaml", {
+    name: format("%s-x86", var.name)
+    nodeclass_name: var.name
+  })
 }
 
-resource "kubernetes_resource" "karpenter_nodepool_arm" {
-  depends_on = [ helm_release.karpenter ]
-
-  manifest = yamlencode(tepmlatefile("${path.module}/templates/karpenter-nodepool-arm.yaml", {
-    name: format("%s-arm", local.name)
-    nodeclass_name: local.name
-  }))
+resource "kubectl_manifest" "karpenter_nodepool_arm" {
+  depends_on = [helm_release.karpenter]
+  yaml_body = templatefile("${path.module}/templates/karpenter-nodepool-arm.yaml", {
+    name: format("%s-arm", var.name)
+    nodeclass_name: var.name
+  })
 }

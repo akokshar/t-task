@@ -16,9 +16,15 @@ Authenticate to the AWS in your terminal (run `aws s3 ls` to test).
 Run the following, review changes and approve saying `yes`
 
 ```sh
+cd cluster
 terraform init
 terraform apply
+```
 
+```sh
+cd cluster_config
+terraform init
+terraform apply
 ```
 
 # Workload execution
