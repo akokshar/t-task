@@ -8,7 +8,7 @@ locals {
   vpc_cidr           = "10.0.0.0/16"
   availability_zones = ["us-east-1a", "us-east-1b"]
 
-  cluster_version = "1.31"
+  cluster_version = "1.32"
 
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
