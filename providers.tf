@@ -6,6 +6,9 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_name
 }
 
+provider "aws" {
+  region = "eu-west-2"
+}
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint

@@ -64,18 +64,6 @@ resource "aws_iam_policy" "karpenter" {
   })
 }
 
-module "pod_identity_association" {
-  source = "./pod-identity-association"
-
-  name        = local.name
-  environment = local.environment
-
-  cluster_name    = module.eks.cluster_name
-  namespace       = "karpenter"
-  service_account = "karpenter"
-  policy_arn      = aws_iam_policy.karpenter.arn
-}
-
 resource "helm_release" "karpenter" {
   name       = "karpenter"
   repository = "oci://public.ecr.aws/karpenter"

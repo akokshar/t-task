@@ -10,7 +10,7 @@ Include a short readme that explains how to use the Terraform repo and that also
 
 # Terraform
 
-Create S3 bucket named `test-42782CC1-0456-4125-9303-FED1B79D84E5`.
+Create S3 bucket named `test-42782cc1-0456-4125-9303-fed1b79d84e5`.
 Authenticate to the AWS in your terminal (run `aws s3 ls` to test).
 
 Run the following, review changes and approve saying `yes`
