@@ -10,4 +10,57 @@ Include a short readme that explains how to use the Terraform repo and that also
 
 # Terraform
 
+Create S3 bucket named `test-42782CC1-0456-4125-9303-FED1B79D84E5`.
+Authenticate to the AWS in your terminal (run `aws s3 ls` to test).
+
+Run the following, review changes and approve saying `yes`
+
+```sh
+terraform init
+terraform apply
+
+```
+
 # Workload execution
+
+To run on `graviton` machine, `pod` specification should have:
+
+```yaml
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - "alex-arm"
+      tolerations:
+      - effect: NoSchedule
+        key: node-pool
+        operator: Equal
+        value: alex-arm
+```
+
+To run on `amd64` machine, `pod` specivication should have:
+
+```yaml
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - "alex-x86"
+      tolerations:
+      - effect: NoSchedule
+        key: node-pool
+        operator: Equal
+        value: alex-x86
+```
+
+

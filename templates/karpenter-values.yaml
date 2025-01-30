@@ -1,0 +1,17 @@
+replicas: 1
+serviceAccount:
+  name: karpenter
+serviceMonitor:
+  enabled: false
+  additionalLabels:
+    release: prometheus-stack
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+settings:
+  clusterName: "${cluster_name}"
+  clusterEndpoint: "${cluster_endpoint}"
