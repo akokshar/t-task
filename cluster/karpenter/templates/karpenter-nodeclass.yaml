@@ -16,6 +16,10 @@ spec:
     - name: ${sg}
 #%{~endfor~}
 
+  amiSelectorTerms:
+    - name: amazon-eks-arm64-node-${cluster_version}*
+    - name: amazon-eks-node-${cluster_version}*
+
   instanceProfile: "${instance_profile}"
 
   tags:

@@ -38,7 +38,7 @@ resource "aws_iam_policy" "karpenter" {
         ],
         Condition = {
           "StringLike" : {
-            "ec2:ResourceTag/karpenter.sh/managed-by" : "${var.cluster_name}"
+            "ec2:ResourceTag/owner": "${var.name}-karpenter"
           }
         },
         Effect   = "Allow",
@@ -79,6 +79,7 @@ resource "helm_release" "karpenter" {
     templatefile("${path.module}/templates/karpenter-values.yaml", {
       cluster_name : var.cluster_name
       cluster_endpoint : var.cluster_endpoint
+      role_arn: aws_iam_role.karpenter.arn
     })
   ]
 }
@@ -89,6 +90,7 @@ resource "kubectl_manifest" "karpenter_nodeclass" {
     name: var.name
     environment: var.environment
     cluster_name: var.cluster_name
+    cluster_version: var.cluster_version
     security_groups: []
     instance_profile: var.instance_profile_name
   })

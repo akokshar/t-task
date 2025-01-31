@@ -69,4 +69,32 @@ To run on `amd64` machine, `pod` specivication should have:
         value: alex-x86
 ```
 
+# Test
 
+Apply test manifests:
+
+```sh
+cd manifests
+kubectl apply -f ./
+```
+
+Check pods status:
+
+```text
+⟫ kubectl get pods -o wide
+NAME   READY   STATUS    RESTARTS   AGE   IP            NODE                                        NOMINATED NODE   READINESS GATES
+arm    1/1     Running   0          10m   10.0.44.116   ip-10-0-47-146.eu-west-2.compute.internal   <none>           <none>
+x86    1/1     Running   0          13m   10.0.35.204   ip-10-0-39-2.eu-west-2.compute.internal     <none>           <none>
+
+⟫ kubectl get nodeclaims.karpenter.sh
+NAME             TYPE        CAPACITY   ZONE         NODE                                        READY   AGE
+alex-arm-8tk5g   t4g.small   spot       eu-west-2a   ip-10-0-47-146.eu-west-2.compute.internal   True    10m
+alex-x86-std66   t2.micro    spot       eu-west-2a   ip-10-0-39-2.eu-west-2.compute.internal     True    13m
+
+⟫ kubectl get node -o custom-columns="NAME:.metadata.name,ARCH:.metadata.labels.kubernetes\.io/arch" 
+NAME                                        ARCH
+ip-10-0-35-174.eu-west-2.compute.internal   arm64
+ip-10-0-37-233.eu-west-2.compute.internal   arm64
+ip-10-0-39-2.eu-west-2.compute.internal     amd64
+ip-10-0-47-146.eu-west-2.compute.internal   arm64
+```

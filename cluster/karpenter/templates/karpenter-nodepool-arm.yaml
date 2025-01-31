@@ -9,7 +9,7 @@ spec:
         environment: ${name}
     spec:
       nodeClassRef:
-        apiVersion: karpenter.k8s.aws/v1
+        group: karpenter.k8s.aws
         kind: EC2NodeClass
         name: ${nodeclass_name}
 
@@ -25,10 +25,10 @@ spec:
       - key: karpenter.sh/capacity-type
         operator: In
         values: ["spot"]
-      - key: "node.kubernetes.io/instance-type"
-        operator: In
-        values:
-        - "m8g.medium"
+        #- key: "node.kubernetes.io/instance-type"
+        #  operator: In
+        #  values:
+        #  - "t4g.medium"
 
   disruption:
     consolidationPolicy: WhenEmpty

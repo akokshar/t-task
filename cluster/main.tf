@@ -42,6 +42,7 @@ module "karpenter" {
   environment = local.environment
 
   cluster_name     = module.eks.cluster_name
+  cluster_version  = local.cluster_version
   cluster_endpoint = module.eks.endpoint
   namespace = "karpenter"
 

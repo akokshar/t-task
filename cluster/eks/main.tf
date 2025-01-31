@@ -76,9 +76,9 @@ module "managed_node_group_cluster" {
   environment      = var.environment
 
   managed_ng_name         = "cluster"
-  managed_ng_min_size     = 1
-  managed_ng_max_size     = 1
-  managed_ng_desired_size = 1
+  managed_ng_min_size     = 2
+  managed_ng_max_size     = 2
+  managed_ng_desired_size = 2
 
   vpc_subnet_ids = var.subnets_ids
 
