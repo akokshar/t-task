@@ -21,12 +21,6 @@ terraform init
 terraform apply
 ```
 
-```sh
-cd cluster_config
-terraform init
-terraform apply
-```
-
 # Workload execution
 
 To run on `graviton` machine, `pod` specification should have:
