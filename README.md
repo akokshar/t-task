@@ -72,7 +72,7 @@ cd manifests
 kubectl apply -f ./
 ```
 
-Check pods status:
+Check pods status (node provisioning may take couple of minutes):
 
 ```text
 ⟫ kubectl get pods -o wide
